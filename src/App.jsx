@@ -1,21 +1,21 @@
-import { useAddress, useMetamask, useEditionDrop, useToken } from '@thirdweb-dev/react';
+import { useAddress, useMetamask, useEditionDrop, useToken, useVote } from '@thirdweb-dev/react';
 import { useState, useEffect, useMemo } from 'react';
+import Main from './Main';
 
 const App = () => {
   // NFT membership address
   const editionDrop = useEditionDrop("0x973047353BCa0FcE8a6c75B7dfdC32C6eCAEF9D3");
   // Governance token address
   const token = useToken("0x912cef8d599dEEF2c255F1461286e53593dfA995")
+  // Voting address
+  const vote = useVote("0x7BcF6f1Fdf942b39aC043362808f4157862c89e3");
   const [hasClaimedNFT, setHasClaimedNFT] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
   const [memberTokenAmounts, setMemberTokenAmounts] = useState([]);
   const [memberAddresses, setMemberAddresses] = useState([]);
+  const [proposals, setProposals] = useState([]);
   const address = useAddress();
   const connectWithMetamask = useMetamask();
-
-  const shortenAddress = (str) => {
-    return str.substring(0, 6) + "..." + str.substring(str.length - 4);
-  };
 
   useEffect(() => {
     if (!address) return
@@ -59,9 +59,19 @@ const App = () => {
       }
     };
 
+    const getAllProposals = async () => {
+      try {
+        const proposals = await vote.getAll();
+        setProposals(proposals);
+      } catch (error) {
+        console.log("failed to get proposals", error);
+      }
+    };
+
+    getAllProposals();
     getAllAddresses();
     getAllBalances();
-  }, [hasClaimedNFT, editionDrop.history, token.history]);
+  }, [hasClaimedNFT, editionDrop.history, token.history, vote]);
 
   const memberList = useMemo(() => {
     return memberAddresses.map((address) => {
@@ -97,35 +107,7 @@ const App = () => {
   }
 
   if (hasClaimedNFT) {
-    return (
-      <div className="member-page">
-        <h1>Muay Thai 🍪DAO Member Page</h1>
-        <p>Congratulations on being a member</p>
-        <div>
-          <div>
-            <h2>Member List</h2>
-            <table className="card">
-              <thead>
-                <tr>
-                  <th>Address</th>
-                  <th>Token Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {memberList.map((member) => {
-                  return (
-                    <tr key={member.address}>
-                      <td>{shortenAddress(member.address)}</td>
-                      <td>{member.tokenAmount}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    );
+    return <Main memberList={memberList} proposals={proposals} vote={vote} hasClaimedNFT={hasClaimedNFT} address={address} token={token} />
   };
 
   return (
