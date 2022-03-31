@@ -1,4 +1,4 @@
-import { useAddress, useMetamask, useEditionDrop, useToken, useVote } from '@thirdweb-dev/react';
+import { useAddress, useMetamask, useEditionDrop, useToken, useVote, useNetwork } from '@thirdweb-dev/react';
 import { useState, useEffect, useMemo } from 'react';
 import { ChainId } from '@thirdweb-dev/sdk'
 import Main from './Main';
@@ -97,17 +97,6 @@ const App = () => {
     }
   };
 
-  if (network?.[0].data.chain.id !== ChainId.Rinkeby) {
-    return (
-      <div className="unsupported-network">
-        <h2>Please connect to Rinkeby</h2>
-        <p>
-          This dapp only works on the Rinkeby network, please switch networks in your connected wallet.
-        </p>
-      </div>
-    );
-  }
-
   if (!address) {
     return (
       <div className="landing">
@@ -115,6 +104,17 @@ const App = () => {
         <button onClick={connectWithMetamask} className="btn-hero">
           Connect your wallet
         </button>
+      </div>
+    );
+  }
+
+  if (network?.[0].data.chain.id !== ChainId.Rinkeby) {
+    return (
+      <div className="unsupported-network">
+        <h2>Please connect to Rinkeby</h2>
+        <p>
+          This dapp only works on the Rinkeby network, please switch networks in your connected wallet.
+        </p>
       </div>
     );
   }
