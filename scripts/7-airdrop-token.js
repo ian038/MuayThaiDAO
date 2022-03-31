@@ -1,9 +1,9 @@
 import sdk from "./1-initialize-sdk.js";
 
-// This is the address to our ERC-1155 membership NFT contract.
+// NFT membership contract.
 const editionDrop = sdk.getEditionDrop("0x973047353BCa0FcE8a6c75B7dfdC32C6eCAEF9D3");
 
-// This is the address to our ERC-20 token contract.
+// Governance token contract.
 const token = sdk.getToken("0x912cef8d599dEEF2c255F1461286e53593dfA995");
 
 (async () => {
@@ -18,7 +18,7 @@ const token = sdk.getToken("0x912cef8d599dEEF2c255F1461286e53593dfA995");
         const airdropTargets = walletAddresses.map((address) => {
             // Pick a random # between 1000 and 10000.
             const randomAmount = Math.floor(Math.random() * (10000 - 1000 + 1) + 1000);
-            console.log("✅ Going to airdrop", randomAmount, "tokens to", address);
+            console.log("✅ Airdropping", randomAmount, "tokens to", address);
 
             const airdropTarget = {
                 toAddress: address,
